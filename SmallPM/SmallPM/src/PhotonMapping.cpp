@@ -16,6 +16,7 @@ In no event shall copyright holders be liable for any damage.
 #include "Intersection.h"
 #include "Ray.h"
 #include "BSDF.h"
+#include "math.h"
 #include <iostream>
 
 //*********************************************************************
@@ -192,13 +193,17 @@ void PhotonMapping::preprocess()
 	}
 	m_global_map.balance();
 
-	while (causticPhotons.size() > 0) {
-		Photon photon = causticPhotons.front();
-		causticPhotons.pop_front();
-		m_caustics_map.store(std::vector<Real>(photon.position.data,
-			photon.position.data + 3), photon);
+
+	if (causticPhotons.size() > 0) {
+		while (causticPhotons.size() > 0) {
+			Photon photon = causticPhotons.front();
+			causticPhotons.pop_front();
+			m_caustics_map.store(std::vector<Real>(photon.position.data,
+				photon.position.data + 3), photon);
+		}
 		m_caustics_map.balance();
 	}
+	
 
 }
 
@@ -275,23 +280,28 @@ Vector3 PhotonMapping::shade(Intersection &it0)const
 	//cout << global_photons.size();
 
 	std::vector<const KDTree<Photon, 3>::Node*> causics_photons;
-	max_distance = 100;
+	max_distance = 5;
 	m_caustics_map.find(std::vector<Real>(it.get_position().data, it.get_position().data + 3), m_nb_photons, causics_photons, max_distance);
 
 	//float totalCos = 0
 
-	Real max_distance = 0;
 
 	if (global_photons.size() > 1) {
 		//cout << "Global " << global_photons.size() << "\n";
 
 		Vector3 color_bleeding(0);
+		Real max_radious = 0.0;
 
 		for (long i = 0; i<global_photons.size(); ++i) {
 			KDTree<Photon, 3>::Node node = *global_photons[i];
 			Photon photon = node.data();
-			Vector3 photonDir = photon.direction;
+			//Vector3 photonDir = photon.direction;
+			Vector3 photon_position = photon.position;
 
+			Real photon_distance = sqrt(pow(photon_position[0] - pI[0], 2) + pow(photon_position[1] - pI[1], 2) + pow(photon_position[2] - pI[2], 2));
+			if (max_radious < photon_distance) {
+				max_radious = photon_distance;
+			}
 
 			/*Vector3 cameraDir = it.get_ray().get_direction();
 			float photonCos = photonDir.dot(cameraDir);
@@ -306,12 +316,44 @@ Vector3 PhotonMapping::shade(Intersection &it0)const
 		/*totalCos = totalCos / global_photons.size();
 		L *= totalCos;*/
 
-		L += color_bleeding;
+		// Circle area
+		Real area = 3.141593 * pow(max_radious, 2);
+		L += color_bleeding/area;
 
-		L = L.normalize();
+		//L = L.normalize();
 	}
+
+
 	if (causics_photons.size() > 1) {
 		//cout << "Caustic " << causics_photons.size() << "\n";
+
+		Vector3 caustic(0);
+		Real max_radious = 0.0;
+
+		for (long i = 0; i<causics_photons.size(); ++i) {
+			KDTree<Photon, 3>::Node node = *causics_photons[i];
+			Photon photon = node.data();
+			//Vector3 photonDir = photon.direction;
+			Vector3 photon_position = photon.position;
+
+			Real photon_distance = sqrt(pow(photon_position[0] - pI[0], 2) + pow(photon_position[1] - pI[1], 2) + pow(photon_position[2] - pI[2], 2));
+			if (max_radious < photon_distance) {
+				max_radious = photon_distance;
+			}
+
+			/*Vector3 cameraDir = it.get_ray().get_direction();
+			float photonCos = photonDir.dot(cameraDir);
+			totalCos = totalCos + photonCos;*/
+			//cout << "Photon " << color.data[0] << "\n";
+
+			caustic += photon.flux * it.intersected()->material()->get_albedo(it);
+
+			//cout << "Photon " << photon.direction.data[0] << "\n";
+		}
+
+		Real area = 3.141593 * pow(max_radious, 2);
+		L += caustic / area;
+		//L = L.normalize();
 	}
 
 	//cout << m_nb_photons << "\n";
