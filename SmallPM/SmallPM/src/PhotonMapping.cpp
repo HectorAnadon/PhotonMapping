@@ -270,28 +270,51 @@ Vector3 PhotonMapping::shade(Intersection &it0)const
 	// Photon mapping algorithm for Global Illumination
 	std::vector<const KDTree<Photon, 3>::Node*> global_photons;
 	Real max_distance = 100;
-	m_global_map.find(std::vector<Real>(it.get_position().data, it.get_position().data + 3), 20, global_photons, max_distance);
+	m_global_map.find(std::vector<Real>(it.get_position().data, it.get_position().data + 3), m_nb_photons, global_photons, max_distance);
 
 	//cout << global_photons.size();
 
 	std::vector<const KDTree<Photon, 3>::Node*> causics_photons;
 	max_distance = 100;
-	m_caustics_map.find(std::vector<Real>(it.get_position().data, it.get_position().data + 3), 30, causics_photons, max_distance);
+	m_caustics_map.find(std::vector<Real>(it.get_position().data, it.get_position().data + 3), m_nb_photons, causics_photons, max_distance);
+
+	//float totalCos = 0
+
+	Real max_distance = 0;
 
 	if (global_photons.size() > 1) {
-		cout << "Global " << global_photons.size() << "\n";
+		//cout << "Global " << global_photons.size() << "\n";
+
+		Vector3 color_bleeding(0);
+
 		for (long i = 0; i<global_photons.size(); ++i) {
 			KDTree<Photon, 3>::Node node = *global_photons[i];
 			Photon photon = node.data();
-			cout << "Photon " << photon.direction.data[0] << "\n";
+			Vector3 photonDir = photon.direction;
+
+
+			/*Vector3 cameraDir = it.get_ray().get_direction();
+			float photonCos = photonDir.dot(cameraDir);
+			totalCos = totalCos + photonCos;*/
+			//cout << "Photon " << color.data[0] << "\n";
+
+			color_bleeding += photon.flux * it.intersected()->material()->get_albedo(it);
+
+			//cout << "Photon " << photon.direction.data[0] << "\n";
 		}
 
+		/*totalCos = totalCos / global_photons.size();
+		L *= totalCos;*/
+
+		L += color_bleeding;
+
+		L = L.normalize();
 	}
 	if (causics_photons.size() > 1) {
-		cout << "Caustic " << causics_photons.size() << "\n";
+		//cout << "Caustic " << causics_photons.size() << "\n";
 	}
 
-	cout << m_nb_photons << "\n";
+	//cout << m_nb_photons << "\n";
 	return L;
 
 	//**********************************************************************
