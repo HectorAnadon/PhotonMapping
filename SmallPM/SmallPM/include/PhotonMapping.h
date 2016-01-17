@@ -41,6 +41,7 @@ class PhotonMapping
 	unsigned int m_nb_photons;
 	bool m_raytraced_direct;
 
+
 	// Structure defining a photon (a directionally-resolved packet of 
 	// energy), that will be used later for radiance estimation.
 	struct Photon

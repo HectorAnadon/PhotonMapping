@@ -203,7 +203,6 @@ void PhotonMapping::preprocess()
 		}
 		m_caustics_map.balance();
 	}
-	
 
 }
 
@@ -231,8 +230,30 @@ Vector3 PhotonMapping::shade(Intersection &it0)const
 
 	Vector3 L(0);	// color inicial (fondo negro) ->>>>> mirar funcion get_background() de world.h
 	Intersection it(it0);
-	Vector3 pI = it.get_position();	// punto de interseccion (x,y,z)
 	Vector3 pN = it.get_normal(); // normal en el punto de interseccion
+
+
+
+
+	// REBOTAR MIENTRAS EL OBJETO SEA DELTA (hay que llegar a un solido)
+	int MAX_REB = 3;
+	int rebotes = 0;
+	Ray newRay;
+	while (it.intersected()->material()->is_delta() && rebotes < MAX_REB) {
+
+		// Rayo rebotado
+		Real pdf;
+		it.intersected()->material()->get_outgoing_sample_ray(it, newRay, pdf);
+
+		// Nueva interseccion
+		world->first_intersection(newRay, it);
+		rebotes++;
+	}
+
+	Vector3 pI = it.get_position();	// punto de interseccion (x,y,z)
+
+
+
 
 	// TERMINO AMBIENTAL
 	//L = world->get_ambient() * it.intersected()->material()->get_albedo(it);
@@ -318,7 +339,7 @@ Vector3 PhotonMapping::shade(Intersection &it0)const
 
 		// Circle area
 		Real area = 3.141593 * pow(max_radious, 2);
-		L += color_bleeding/area;
+		L += color_bleeding / (area*global_photons.size());
 
 		//L = L.normalize();
 	}
@@ -352,7 +373,7 @@ Vector3 PhotonMapping::shade(Intersection &it0)const
 		}
 
 		Real area = 3.141593 * pow(max_radious, 2);
-		L += caustic / area;
+		L += caustic / (area*causics_photons.size());
 		//L = L.normalize();
 	}
 
