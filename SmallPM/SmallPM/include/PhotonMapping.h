@@ -39,6 +39,7 @@ class PhotonMapping
 	unsigned int m_nb_current_shots;
 
 	unsigned int m_nb_photons;
+	unsigned int maximum_bounds = 5;
 	bool m_raytraced_direct;
 
 
