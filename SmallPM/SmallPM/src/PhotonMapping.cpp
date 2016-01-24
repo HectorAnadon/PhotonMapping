@@ -204,20 +204,23 @@ void PhotonMapping::preprocess() {
 Vector3 PhotonMapping::shade(Intersection &it0)const {
 	Intersection it(it0);
 	Vector3 normal = it.get_normal();
-	normal = normal.normalize();
 
 	int current_bounds = 0;
 	Ray transmitted_ray;
 	while (it.intersected()->material()->is_delta() && current_bounds < maximum_bounds) {
 		Real pdf;	//Useless
 		it.intersected()->material()->get_outgoing_sample_ray(it, transmitted_ray, pdf);
+		transmitted_ray.shift();
 		world->first_intersection(transmitted_ray, it);
 		current_bounds++;
 	}
 	Vector3 intersection = it.get_position();
+	normal = it.get_normal();
+
+	Vector3 L(world->get_background());
 
 	//Ambiental light
-	Vector3 L = it.intersected()->material()->get_albedo(it) * world->get_ambient();
+	//Vector3 L = it.intersected()->material()->get_albedo(it) * world->get_ambient();
 
 	//Direct light
 	//For each light
@@ -282,7 +285,9 @@ Vector3 PhotonMapping::shade(Intersection &it0)const {
 
 		// Circle area
 		Real area = 3.141593 * pow(max_radious, 2);
-		L += color_bleeding / (area*global_photons.size());
+		//L += color_bleeding / (area*global_photons.size());
+		L += color_bleeding / (area*m_nb_global_photons);
+		//L += color_bleeding / (area);
 	}
 
 
@@ -309,7 +314,10 @@ Vector3 PhotonMapping::shade(Intersection &it0)const {
 		}
 
 		Real area = 3.141593 * pow(max_radious, 2);
-		L += caustic / (area*causics_photons.size());
+		//L += caustic / (area*causics_photons.size());
+		L += caustic / (area*m_nb_caustic_photons);
+		//L += caustic / (area);
+
 	}
 
 	//cout << m_nb_photons << "\n";
