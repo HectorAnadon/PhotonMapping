@@ -203,7 +203,6 @@ void PhotonMapping::preprocess() {
 //---------------------------------------------------------------------
 Vector3 PhotonMapping::shade(Intersection &it0)const {
 	Intersection it(it0);
-	Vector3 normal = it.get_normal();
 
 	int current_bounds = 0;
 	Ray transmitted_ray;
@@ -215,7 +214,7 @@ Vector3 PhotonMapping::shade(Intersection &it0)const {
 		current_bounds++;
 	}
 	Vector3 intersection = it.get_position();
-	normal = it.get_normal();
+	Vector3 normal = it.get_normal();
 
 	Vector3 L(world->get_background());
 
