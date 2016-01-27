@@ -50,10 +50,10 @@ int main(int argc, char* argv[])
 
 	unsigned int scene = 1;
 
-	unsigned int photons_global = 10000, 
-				 photons_caustic = 10000, 
-				 max_shots = 100000, 
-				 nb_nearest_photons = 10;
+	unsigned int photons_global = 50000, 
+				 photons_caustic = 50000, 
+				 max_shots = 500000, 
+				 nb_nearest_photons = 500;
 
 	// ---------------------------------------------------------------------
 	// Parse input

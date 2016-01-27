@@ -237,7 +237,7 @@ Vector3 PhotonMapping::shade(Intersection &it0)const {
 			Real cos = r_light_norm.dot(normal);
 			L += kd * id * cos;		//Diffuse
 
-			Vector3 is = light_source->get_incoming_light(intersection);
+			/*Vector3 is = light_source->get_incoming_light(intersection);
 			Vector3 ks = it.intersected()->material()->get_albedo(it);
 			Vector3 R = r_light.reflect(normal);
 			Vector3 V = it.get_ray().get_direction();
@@ -246,7 +246,7 @@ Vector3 PhotonMapping::shade(Intersection &it0)const {
 			cos = R.dot(V);
 			if (cos > 0.0) {
 				L += ks * is * pow(cos, 100);	//Specular
-			}
+			}*/
 		}
 	}
 
