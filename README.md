@@ -10,7 +10,7 @@ This simulation is shown in the following images:
 <br />
 ==================================================================================
 
-/*********************************************************************************
+/*********************************************************************************<br />
 Copyright (C) 2015 Adrian Jarabo (ajarabo@unizar.es)
 Copyright (C) 2015 Diego Gutierrez (diegog@unizar.es)
 All rights reserved.
@@ -21,8 +21,8 @@ intend to be fast or general, but just to provide an educational tool for underg
 students. 
 
 This software is provided as is, and any express or implied warranties are disclaimed.
-In no event shall copyright holders be liable for any damage.
-**********************************************************************************/
+In no event shall copyright holders be liable for any damage.<br />
+**********************************************************************************/<br />
 
 This code provides the base framework for implementing a basic functional photon 
 mapper as described by Jensen in his initial works. The goal is that the students
@@ -32,10 +32,9 @@ in SmallPM/src), in particular in the one that precomputes the photon maps, and 
 one that uses them to shade a point in the scene. 
 
 The code has pre-baked a set of scenes, and its execution can be controlled using
-the command line. To check what commands should be introduced to the program, we 
-refer to 'main.cpp' at SmallPM/src.
+the command line. To check what commands should be introduced to the program, we refer to 'main.cpp' at SmallPM/src.
 -----------------------------------------------------------------------------------
-Notes:
+###Notes:<br />
 1-	The following code has been though as an educational piece of software to teach
 	how to implement a small classic photon mapper, based on Jensen's initial design.
 	As such, it only supports Lambertian and delta (perfect transmissive and specular)
