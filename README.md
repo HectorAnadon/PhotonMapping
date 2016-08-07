@@ -29,9 +29,9 @@ mapper as described by Jensen in his initial works. The goal is that the student
 fill the blank parts of the code that implement the algorithm. For this task, the
 students have to work on two functions on the file "PhotonMapper.cpp" (can be found
 in SmallPM/src), in particular in the one that precomputes the photon maps, and the 
-one that uses them to shade a point in the scene. <br />
+one that uses them to shade a point in the scene.<br />
 
-#####The code has pre-baked a set of scenes, and its execution can be controlled using the command line. To check what commands should be introduced to the program, we refer to 'main.cpp' at SmallPM/src.
+The code has pre-baked a set of scenes, and its execution can be controlled using the command line. To check what commands should be introduced to the program, we refer to 'main.cpp' at SmallPM/src.
 
 -----------------------------------------------------------------------------------
 ###Notes:<br />
